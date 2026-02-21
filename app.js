@@ -1,5 +1,5 @@
 // app.js
-const CSV_URL = "COLE_AQUI_O_LINK_CSV_PUBLICADO_DA_SUA_PLANILHA";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzq2BNuD_O2dUPlIPfkwfg1jhNS_RsiiL8qm3YmnMBn1YnyTytx2huJtK2OsIxAXjhsNUuzufSQ8m9/pub?gid=0&single=true&output=csv";
 
 function parseCSV(text) {
   // Parser simples que lida com vírgula/ponto e vírgula e aspas

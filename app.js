@@ -1,8 +1,10 @@
 // app.js
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzq2BNuD_O2dUPlIPfkwfg1jhNS_RsiiL8qm3YmnMBn1YnyTytx2huJtK2OsIxAXjhsNUuzufSQ8m9/pub?gid=0&single=true&output=csv";
 
+let ALL_EVENTS = [];
+let ACTIVE_CITY = "TODAS";
+
 function parseCSV(text) {
-  // Parser simples que lida com vírgula/ponto e vírgula e aspas
   const rows = [];
   let row = [];
   let cur = "";
@@ -31,7 +33,6 @@ function parseCSV(text) {
       }
       row = [];
       cur = "";
-      // pula \r\n
       if (c === "\r" && next === "\n") i++;
       continue;
     }
@@ -48,7 +49,6 @@ function parseCSV(text) {
 }
 
 function brDateToSortable(d) {
-  // dd/mm/yyyy -> yyyymmdd (string)
   const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d);
   if (!m) return "";
   return `${m[3]}${m[2]}${m[1]}`;
@@ -56,7 +56,7 @@ function brDateToSortable(d) {
 
 function isUpcomingOrToday(d) {
   const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d);
-  if (!m) return true; // se tiver estranho, não esconde
+  if (!m) return true;
   const dt = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
   const today = new Date();
   today.setHours(0,0,0,0);
@@ -73,9 +73,60 @@ function escapeHTML(s) {
     .replaceAll("'", "&#039;");
 }
 
+function normalize(s){
+  return String(s ?? "").trim().toLowerCase();
+}
+
+function render() {
+  const tbody = document.getElementById("tbody");
+  const status = document.getElementById("status");
+  const count = document.getElementById("count");
+  const search = normalize(document.getElementById("search").value);
+
+  let filtered = ALL_EVENTS.slice();
+
+  if (ACTIVE_CITY !== "TODAS") {
+    filtered = filtered.filter(e => normalize(e.cidade) === normalize(ACTIVE_CITY));
+  }
+
+  if (search) {
+    filtered = filtered.filter(e =>
+      normalize(e.evento).includes(search) ||
+      normalize(e.cidade).includes(search) ||
+      normalize(e.distancias).includes(search)
+    );
+  }
+
+  count.textContent = `${filtered.length} corrida(s)`;
+
+  if (!filtered.length) {
+    status.textContent = "Nenhuma corrida encontrada para esse filtro.";
+    tbody.innerHTML = "";
+    return;
+  }
+
+  status.textContent = "";
+
+  tbody.innerHTML = filtered.map(e => {
+    const link = (e.link || "").trim();
+    const linkCell = link
+      ? `<a href="${escapeHTML(link)}" target="_blank" rel="noopener">Abrir</a>`
+      : `—`;
+
+    return `
+      <tr>
+        <td>${escapeHTML(e.data)}</td>
+        <td>${escapeHTML(e.cidade)}</td>
+        <td>${escapeHTML(e.evento)}</td>
+        <td>${escapeHTML(e.distancias)}</td>
+        <td>${linkCell}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
 async function loadCalendar() {
   const status = document.getElementById("status");
-  const tbody = document.getElementById("tbody");
   const updated = document.getElementById("updated");
 
   try {
@@ -87,11 +138,12 @@ async function loadCalendar() {
     const rows = parseCSV(text);
     if (rows.length < 2) {
       status.textContent = "Planilha vazia (sem dados).";
-      tbody.innerHTML = "";
+      ALL_EVENTS = [];
+      render();
       return;
     }
 
-    const header = rows[0].map(h => h.toLowerCase());
+    const header = rows[0].map(h => normalize(h));
     const idx = {
       data: header.indexOf("data"),
       cidade: header.indexOf("cidade"),
@@ -100,8 +152,7 @@ async function loadCalendar() {
       link: header.indexOf("link"),
     };
 
-    // monta lista de eventos
-    const events = rows.slice(1)
+    ALL_EVENTS = rows.slice(1)
       .filter(r => r.join("").trim().length > 0)
       .map(r => ({
         data: r[idx.data] ?? "",
@@ -110,42 +161,37 @@ async function loadCalendar() {
         distancias: r[idx.distancias] ?? "",
         link: r[idx.link] ?? "",
       }))
-      .filter(e => e.data) // exige data
+      .filter(e => e.data)
       .filter(e => isUpcomingOrToday(e.data))
       .sort((a,b) => brDateToSortable(a.data).localeCompare(brDateToSortable(b.data)));
 
-    if (!events.length) {
-      status.textContent = "Nenhuma corrida futura encontrada.";
-      tbody.innerHTML = "";
-      return;
-    }
-
-    tbody.innerHTML = events.map(e => {
-      const link = (e.link || "").trim();
-      const linkCell = link
-        ? `<a href="${escapeHTML(link)}" target="_blank" rel="noopener">Abrir</a>`
-        : `—`;
-
-      return `
-        <tr>
-          <td>${escapeHTML(e.data)}</td>
-          <td>${escapeHTML(e.cidade)}</td>
-          <td>${escapeHTML(e.evento)}</td>
-          <td>${escapeHTML(e.distancias)}</td>
-          <td>${linkCell}</td>
-        </tr>
-      `;
-    }).join("");
-
-    status.textContent = "";
     const d = new Date();
     const pad = n => String(n).padStart(2,"0");
     updated.textContent = `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
 
+    render();
+
   } catch (err) {
     status.textContent = "Erro ao carregar a planilha. Verifique se ela está publicada em CSV.";
-    tbody.innerHTML = "";
+    ALL_EVENTS = [];
+    render();
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadCalendar);
+function bindFilters() {
+  document.querySelectorAll(".chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      ACTIVE_CITY = btn.getAttribute("data-city") || "TODAS";
+      render();
+    });
+  });
+
+  document.getElementById("search").addEventListener("input", () => render());
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  bindFilters();
+  loadCalendar();
+});

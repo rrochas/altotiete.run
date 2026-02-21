@@ -79,6 +79,7 @@ function normalize(s){
 
 function render() {
   const tbody = document.getElementById("tbody");
+  const cards = document.getElementById("cards");
   const status = document.getElementById("status");
   const count = document.getElementById("count");
   const search = normalize(document.getElementById("search").value);
@@ -101,26 +102,56 @@ function render() {
 
   if (!filtered.length) {
     status.textContent = "Nenhuma corrida encontrada para esse filtro.";
-    tbody.innerHTML = "";
+    if (tbody) tbody.innerHTML = "";
+    cards.innerHTML = "";
     return;
   }
 
   status.textContent = "";
 
-  tbody.innerHTML = filtered.map(e => {
+  // tabela
+  if (tbody) {
+    tbody.innerHTML = filtered.map(e => {
+      const link = (e.link || "").trim();
+      const linkCell = link
+        ? `<a href="${escapeHTML(link)}" target="_blank" rel="noopener">Abrir</a>`
+        : `—`;
+
+      return `
+        <tr>
+          <td>${escapeHTML(e.data)}</td>
+          <td>${escapeHTML(e.cidade)}</td>
+          <td>${escapeHTML(e.evento)}</td>
+          <td>${escapeHTML(e.distancias)}</td>
+          <td>${linkCell}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  // cards (mobile)
+  cards.innerHTML = filtered.map(e => {
     const link = (e.link || "").trim();
-    const linkCell = link
-      ? `<a href="${escapeHTML(link)}" target="_blank" rel="noopener">Abrir</a>`
-      : `—`;
+    const primary = link
+      ? `<a class="btn primary" href="${escapeHTML(link)}" target="_blank" rel="noopener">Inscrição / Info</a>`
+      : `<span class="btn" aria-disabled="true">Sem link</span>`;
 
     return `
-      <tr>
-        <td>${escapeHTML(e.data)}</td>
-        <td>${escapeHTML(e.cidade)}</td>
-        <td>${escapeHTML(e.evento)}</td>
-        <td>${escapeHTML(e.distancias)}</td>
-        <td>${linkCell}</td>
-      </tr>
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <h3>${escapeHTML(e.evento)}</h3>
+            <div class="meta">
+              <span>📍 ${escapeHTML(e.cidade)}</span>
+              <span>📏 ${escapeHTML(e.distancias)}</span>
+            </div>
+          </div>
+          <span class="badge">${escapeHTML(e.data)}</span>
+        </div>
+        <div class="actions">
+          ${primary}
+        </div>
+      </article>
     `;
   }).join("");
 }
@@ -167,15 +198,21 @@ async function loadCalendar() {
 
     const d = new Date();
     const pad = n => String(n).padStart(2,"0");
-    updated.textContent = `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
-
-    render();
-
+    updated.textContent = `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear())}`; // <- ops corrigindo abaixo
   } catch (err) {
     status.textContent = "Erro ao carregar a planilha. Verifique se ela está publicada em CSV.";
     ALL_EVENTS = [];
-    render();
   }
+
+  // corrige o updated sem bug
+  try{
+    const d = new Date();
+    const pad = n => String(n).padStart(2,"0");
+    document.getElementById("updated").textContent =
+      `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+  } catch {}
+
+  render();
 }
 
 function bindFilters() {

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alto Tietê Run — Calendário</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>ALTO TIETÊ RUN</h1>
+    <p>Calendário de corridas na região</p>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>📅 Próximas corridas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Cidade</th>
+            <th>Evento</th>
+            <th>Distâncias</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>20/03/2026</td>
+            <td>Mogi das Cruzes</td>
+            <td>Corrida Exemplo</td>
+            <td>5K • 10K</td>
+            <td><a href="#" target="_blank" rel="noopener">Inscrição</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="note">Atualizado manualmente. Em breve: filtros por cidade e distância.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Alto Tietê Run</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

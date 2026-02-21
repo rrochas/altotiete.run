@@ -1,17 +1,23 @@
 :root{
   --bg:#ffffff;
-  --text:#111827;
-  --muted:#6b7280;
-  --line:#e5e7eb;
-  --head:#f9fafb;
-  --link:#2563eb;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --head:#f8fafc;
+  --chip:#f1f5f9;
+  --chipText:#0f172a;
+  --primary:#0f172a;
+  --shadow: 0 10px 30px rgba(2,6,23,.06);
+  --radius:14px;
 }
 
 *{ box-sizing:border-box; }
 
+html, body { height:100%; }
+
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   background: var(--bg);
   color: var(--text);
 }
@@ -23,44 +29,72 @@ body{
 }
 
 .top{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
-  background: #fff;
 }
 
-.head{
+.top-inner{
   display:flex;
   align-items:center;
-  gap:14px;
+  justify-content:space-between;
+  gap: 12px;
   padding: 14px 0;
 }
 
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width: 0;
+}
+
 .logo{
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 }
 
-.headtext h1{
+.brand-text{ min-width:0; }
+.brand-text h1{
   margin:0;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .2px;
 }
-
-.headtext p{
+.brand-text .sub{
   margin:4px 0 0;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
 }
 
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  text-decoration:none;
+  color: var(--text);
+  background: #fff;
+  font-size: 13px;
+}
+.pill:hover{ background: var(--head); }
+
 .status{
-  margin: 16px 0 8px;
+  margin: 16px 0 6px;
   color: var(--muted);
   font-size: 14px;
   min-height: 18px;
 }
 
+/* filtros */
 .filters{
-  margin: 8px 0 14px;
+  margin: 10px 0 14px;
   display:flex;
   flex-direction:column;
   gap:10px;
@@ -69,41 +103,54 @@ body{
 .filters-row{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
   align-items:center;
-  justify-content:space-between;
+  gap:8px;
 }
 
-.filters-row:first-child{
-  justify-content:flex-start;
-}
+.chips{ justify-content:flex-start; }
 
 .chip{
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--chip);
+  color: var(--chipText);
   padding: 8px 10px;
   border-radius: 999px;
   font-size: 13px;
   cursor:pointer;
-  color: var(--text);
+  transition: transform .02s ease, background .15s ease;
 }
-
-.chip:hover{
-  background: #fafafa;
-}
+.chip:active{ transform: scale(.98); }
+.chip:hover{ background:#eaf0f7; }
 
 .chip.active{
-  border-color: #111827;
-  background: #111827;
-  color: #fff;
+  background: var(--primary);
+  color:#fff;
+  border-color: var(--primary);
 }
 
-.search{
-  flex: 1 1 260px;
-  max-width: 420px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
+.searchrow{
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.searchbox{
+  flex: 1 1 280px;
+  max-width: 520px;
+  display:flex;
+  align-items:center;
+  gap:8px;
   padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(2,6,23,.03);
+}
+.searchbox .icon{ font-size: 14px; opacity: .7; }
+
+#search{
+  width:100%;
+  border:0;
+  outline:0;
   font-size: 14px;
 }
 
@@ -113,20 +160,27 @@ body{
   white-space:nowrap;
 }
 
+/* tabela */
+.table-card{
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
 .table-wrap{
   overflow:auto;
-  border: 1px solid var(--line);
-  border-radius: 10px;
 }
 
 table{
   width:100%;
   border-collapse: collapse;
-  min-width: 780px;
+  min-width: 780px; /* desktop ok; mobile vai esconder e usar cards */
 }
 
 th, td{
-  padding: 12px 10px;
+  padding: 12px 12px;
   border-bottom: 1px solid var(--line);
   text-align:left;
   font-size: 14px;
@@ -135,22 +189,115 @@ th, td{
 
 th{
   background: var(--head);
-  font-weight: 700;
+  font-weight: 800;
+  color: #0b1220;
 }
 
 tr:hover td{
-  background: #fafafa;
+  background: #fbfdff;
 }
 
 a{
-  color: var(--link);
+  color: #2563eb;
   text-decoration: none;
 }
-a:hover{
-  text-decoration: underline;
+a:hover{ text-decoration: underline; }
+
+/* cards (mobile) */
+.cards{
+  display: none; /* liga no mobile */
+  margin-top: 12px;
+  gap: 10px;
 }
 
-.foot{
-  padding: 18px 0 30px;
+.card{
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+
+.card-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--head);
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b1220;
+  white-space: nowrap;
+}
+
+.card h3{
+  margin:0;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.card .meta{
+  margin-top: 6px;
   color: var(--muted);
+  font-size: 13px;
+  display:flex;
+  flex-wrap:wrap;
+  gap: 10px;
+}
+
+.card .meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.card .actions{
+  margin-top: 10px;
+  display:flex;
+  gap: 10px;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  text-decoration:none;
+  width: 100%;
+}
+.btn.primary{
+  background: var(--primary);
+  border-color: var(--primary);
+  color:#fff;
+}
+.btn:hover{ background: var(--head); }
+.btn.primary:hover{ filter: brightness(.95); }
+
+.foot{
+  padding: 18px 0 28px;
+  color: var(--muted);
+}
+
+/* Responsivo: no celular, esconde tabela e mostra cards */
+@media (max-width: 720px){
+  .pill{ display:none; }
+  .table-card{ display:none; }
+  .cards{ display:grid; }
+  .logo{ width: 40px; height: 40px; }
+  .brand-text h1{ font-size: 15px; }
 }

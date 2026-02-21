@@ -10,12 +10,18 @@
 
 <body>
   <header class="top">
-    <div class="wrap head">
-      <img class="logo" src="logo.png" alt="Alto Tietê Run" />
-      <div class="headtext">
-        <h1>Calendário de Corridas</h1>
-        <p id="updated">—</p>
+    <div class="wrap top-inner">
+      <div class="brand">
+        <img class="logo" src="logo.png" alt="Alto Tietê Run" />
+        <div class="brand-text">
+          <h1>Calendário de Corridas</h1>
+          <p class="sub" id="updated">—</p>
+        </div>
       </div>
+
+      <a class="pill" href="https://instagram.com/altotiete.run" target="_blank" rel="noopener">
+        Instagram
+      </a>
     </div>
   </header>
 
@@ -23,7 +29,7 @@
     <p class="status" id="status"></p>
 
     <section class="filters">
-      <div class="filters-row">
+      <div class="filters-row chips">
         <button class="chip active" data-city="TODAS">Todas</button>
         <button class="chip" data-city="Mogi das Cruzes">Mogi</button>
         <button class="chip" data-city="Suzano">Suzano</button>
@@ -37,26 +43,35 @@
         <button class="chip" data-city="Biritiba Mirim">Biritiba</button>
       </div>
 
-      <div class="filters-row">
-        <input id="search" class="search" type="search" placeholder="Buscar por evento (opcional)" />
+      <div class="filters-row searchrow">
+        <div class="searchbox">
+          <span class="icon">🔎</span>
+          <input id="search" type="search" placeholder="Buscar evento, cidade, distância..." />
+        </div>
         <span class="count" id="count"></span>
       </div>
     </section>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Cidade</th>
-            <th>Evento</th>
-            <th>Distâncias</th>
-            <th>Link</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
+    <!-- Desktop/tablet: tabela -->
+    <section class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Cidade</th>
+              <th>Evento</th>
+              <th>Distâncias</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Mobile: cards -->
+    <section class="cards" id="cards"></section>
 
     <footer class="foot">
       <small>© <span id="year"></span> Alto Tietê Run</small>

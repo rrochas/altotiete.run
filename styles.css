@@ -27,11 +27,11 @@ body{
   background: #fff;
 }
 
-.top .wrap{
+.head{
   display:flex;
   align-items:center;
   gap:14px;
-  padding: 14px 16px;
+  padding: 14px 0;
 }
 
 .logo{
@@ -53,10 +53,64 @@ body{
 }
 
 .status{
-  margin: 18px 0 10px;
+  margin: 16px 0 8px;
   color: var(--muted);
   font-size: 14px;
   min-height: 18px;
+}
+
+.filters{
+  margin: 8px 0 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.filters-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.filters-row:first-child{
+  justify-content:flex-start;
+}
+
+.chip{
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor:pointer;
+  color: var(--text);
+}
+
+.chip:hover{
+  background: #fafafa;
+}
+
+.chip.active{
+  border-color: #111827;
+  background: #111827;
+  color: #fff;
+}
+
+.search{
+  flex: 1 1 260px;
+  max-width: 420px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.count{
+  color: var(--muted);
+  font-size: 13px;
+  white-space:nowrap;
 }
 
 .table-wrap{
@@ -68,7 +122,7 @@ body{
 table{
   width:100%;
   border-collapse: collapse;
-  min-width: 780px; /* no celular vira scroll horizontal, mas continua legível */
+  min-width: 780px;
 }
 
 th, td{

@@ -10,7 +10,7 @@
 
 <body>
   <header class="top">
-    <div class="wrap">
+    <div class="wrap head">
       <img class="logo" src="logo.png" alt="Alto Tietê Run" />
       <div class="headtext">
         <h1>Calendário de Corridas</h1>
@@ -21,6 +21,27 @@
 
   <main class="wrap">
     <p class="status" id="status"></p>
+
+    <section class="filters">
+      <div class="filters-row">
+        <button class="chip active" data-city="TODAS">Todas</button>
+        <button class="chip" data-city="Mogi das Cruzes">Mogi</button>
+        <button class="chip" data-city="Suzano">Suzano</button>
+        <button class="chip" data-city="Poá">Poá</button>
+        <button class="chip" data-city="Ferraz de Vasconcelos">Ferraz</button>
+        <button class="chip" data-city="Itaquaquecetuba">Itaqua</button>
+        <button class="chip" data-city="Arujá">Arujá</button>
+        <button class="chip" data-city="Santa Isabel">Santa Isabel</button>
+        <button class="chip" data-city="Guararema">Guararema</button>
+        <button class="chip" data-city="Salesópolis">Salesópolis</button>
+        <button class="chip" data-city="Biritiba Mirim">Biritiba</button>
+      </div>
+
+      <div class="filters-row">
+        <input id="search" class="search" type="search" placeholder="Buscar por evento (opcional)" />
+        <span class="count" id="count"></span>
+      </div>
+    </section>
 
     <div class="table-wrap">
       <table>

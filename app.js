@@ -1,4 +1,3 @@
-// app.js
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzq2BNuD_O2dUPlIPfkwfg1jhNS_RsiiL8qm3YmnMBn1YnyTytx2huJtK2OsIxAXjhsNUuzufSQ8m9/pub?gid=0&single=true&output=csv";
 
 let ALL_EVENTS = [];
@@ -48,6 +47,17 @@ function parseCSV(text) {
   return rows;
 }
 
+function normalize(s){ return String(s ?? "").trim().toLowerCase(); }
+
+function escapeHTML(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function brDateToSortable(d) {
   const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d);
   if (!m) return "";
@@ -62,19 +72,6 @@ function isUpcomingOrToday(d) {
   today.setHours(0,0,0,0);
   dt.setHours(0,0,0,0);
   return dt >= today;
-}
-
-function escapeHTML(s) {
-  return String(s ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function normalize(s){
-  return String(s ?? "").trim().toLowerCase();
 }
 
 function render() {
@@ -103,13 +100,12 @@ function render() {
   if (!filtered.length) {
     status.textContent = "Nenhuma corrida encontrada para esse filtro.";
     if (tbody) tbody.innerHTML = "";
-    cards.innerHTML = "";
+    if (cards) cards.innerHTML = "";
     return;
   }
 
   status.textContent = "";
 
-  // tabela
   if (tbody) {
     tbody.innerHTML = filtered.map(e => {
       const link = (e.link || "").trim();
@@ -129,31 +125,30 @@ function render() {
     }).join("");
   }
 
-  // cards (mobile)
-  cards.innerHTML = filtered.map(e => {
-    const link = (e.link || "").trim();
-    const primary = link
-      ? `<a class="btn primary" href="${escapeHTML(link)}" target="_blank" rel="noopener">Inscrição / Info</a>`
-      : `<span class="btn" aria-disabled="true">Sem link</span>`;
+  if (cards) {
+    cards.innerHTML = filtered.map(e => {
+      const link = (e.link || "").trim();
+      const primary = link
+        ? `<a class="btn primary" href="${escapeHTML(link)}" target="_blank" rel="noopener">Inscrição / Info</a>`
+        : `<span class="btn" aria-disabled="true">Sem link</span>`;
 
-    return `
-      <article class="card">
-        <div class="card-top">
-          <div>
-            <h3>${escapeHTML(e.evento)}</h3>
-            <div class="meta">
-              <span>📍 ${escapeHTML(e.cidade)}</span>
-              <span>📏 ${escapeHTML(e.distancias)}</span>
+      return `
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h3>${escapeHTML(e.evento)}</h3>
+              <div class="meta">
+                <span>📍 ${escapeHTML(e.cidade)}</span>
+                <span>📏 ${escapeHTML(e.distancias)}</span>
+              </div>
             </div>
+            <span class="badge">${escapeHTML(e.data)}</span>
           </div>
-          <span class="badge">${escapeHTML(e.data)}</span>
-        </div>
-        <div class="actions">
-          ${primary}
-        </div>
-      </article>
-    `;
-  }).join("");
+          <div class="actions">${primary}</div>
+        </article>
+      `;
+    }).join("");
+  }
 }
 
 async function loadCalendar() {
@@ -198,21 +193,15 @@ async function loadCalendar() {
 
     const d = new Date();
     const pad = n => String(n).padStart(2,"0");
-    updated.textContent = `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear())}`; // <- ops corrigindo abaixo
+    updated.textContent = `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+
+    render();
+
   } catch (err) {
     status.textContent = "Erro ao carregar a planilha. Verifique se ela está publicada em CSV.";
     ALL_EVENTS = [];
+    render();
   }
-
-  // corrige o updated sem bug
-  try{
-    const d = new Date();
-    const pad = n => String(n).padStart(2,"0");
-    document.getElementById("updated").textContent =
-      `Atualizado em ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
-  } catch {}
-
-  render();
 }
 
 function bindFilters() {

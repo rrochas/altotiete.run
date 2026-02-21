@@ -3,39 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Alto Tietê Run | Calendário Oficial</title>
-  <meta name="description" content="Calendário atualizado de corridas no Alto Tietê: Mogi, Suzano, Poá, Ferraz, Itaquaquecetuba, Arujá e região." />
+  <title>Alto Tietê Run | Calendário</title>
+  <meta name="description" content="Calendário de corridas no Alto Tietê." />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-
-<header class="hero">
-  <h1>ALTO TIETÊ RUN</h1>
-  <p>O calendário oficial das corridas da região</p>
-  <a href="#calendario" class="btn">Ver próximas corridas</a>
-</header>
-
-<section id="calendario" class="container">
-  <h2>📅 Próximas Corridas</h2>
-
-  <div class="card">
-    <div class="evento">
-      <div>
-        <h3>Corrida Exemplo</h3>
-        <p>Mogi das Cruzes</p>
-      </div>
-      <div class="info">
-        <span>20/03/2026</span>
-        <span>5K • 10K</span>
+  <header class="top">
+    <div class="wrap">
+      <img class="logo" src="logo.png" alt="Alto Tietê Run" />
+      <div class="headtext">
+        <h1>Calendário de Corridas</h1>
+        <p id="updated">—</p>
       </div>
     </div>
-  </div>
+  </header>
 
-</section>
+  <main class="wrap">
+    <p class="status" id="status"></p>
 
-<footer>
-  <p>© 2026 Alto Tietê Run</p>
-</footer>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Cidade</th>
+            <th>Evento</th>
+            <th>Distâncias</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
 
+    <footer class="foot">
+      <small>© <span id="year"></span> Alto Tietê Run</small>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="app.js"></script>
 </body>
 </html>
